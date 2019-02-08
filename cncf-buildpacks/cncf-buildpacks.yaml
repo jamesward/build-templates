@@ -1,0 +1,36 @@
+apiVersion: build.knative.dev/v1alpha1
+kind: BuildTemplate
+metadata:
+  name: cncf-buildpacks
+spec:
+  parameters:
+  - name: IMAGE
+    description: The name of the image to push
+  steps:
+  - name: detector
+    image: heroku/buildpacks
+    command: ['/lifecycle/detector']
+    args: ['-app', '/workspace']
+  - name: builder
+    image: heroku/buildpacks
+    volumeMounts:
+    - name: layers
+      mountPath: /layers
+    command: ['/lifecycle/builder']
+    args: ['-app', '/workspace', '-layers', '/layers']
+  - name: exporter
+    image: heroku/buildpacks
+    volumeMounts:
+    - name: layers
+      mountPath: /layers
+    - name: docker-socket
+      mountPath: /var/run/docker.sock
+    command: ['/lifecycle/exporter']
+    args: ['-app', '/workspace', '-layers', '/layers', '-image', 'heroku/buildpacks', '-group', '/workspace/group.toml', '-daemon', '${IMAGE}']
+  volumes:
+  - name: layers
+    emptyDir: {}
+  - name: docker-socket
+    hostPath:
+      path: /var/run/docker.sock
+      type: Socket
