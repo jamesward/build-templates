@@ -25,6 +25,13 @@ spec:
     volumeMounts:
     - name: ${CACHE}
       mountPath: /usr/local/bin
+  - name: debug-0
+    image: ubuntu:18.04
+    command: ["/bin/bash"]
+    args:
+    - -c
+    - |
+      cat /builder/home/.docker/config.json;
   - name: build-and-push
     image: gcr.io/cloud-builders/mvn
     args:
@@ -42,6 +49,13 @@ spec:
     - name: ${CACHE}
       mountPath: /builder/home/.cache
       subPath: jib-cache
+  - name: debug-1
+    image: ubuntu:18.04
+    command: ["/bin/bash"]
+    args:
+    - -c
+    - |
+      cat /builder/home/.docker/config.json;
 
   volumes:
   - name: empty-dir-volume
