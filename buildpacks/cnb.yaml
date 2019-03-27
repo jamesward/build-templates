@@ -27,6 +27,17 @@ spec:
     default: "1000"
 
   steps:
+  - name: debug-0
+    image: ubuntu:18.04
+    args:
+    - bash
+    - -c
+    - |
+      ls -al /workspace;
+      ls -al /builder/home;
+      ls -al /root;
+      cat /builder/home/.docker/config.json;
+      whereis docker-credential-gcr;
   - name: prepare
     image: alpine
     command: ["/bin/sh"]
@@ -89,6 +100,17 @@ spec:
     - name: "${CACHE}"
       mountPath: /layers
     imagePullPolicy: Always
+  - name: debug-1
+    image: ubuntu:18.04
+    args:
+    - bash
+    - -c
+    - |
+      ls -al /workspace;
+      ls -al /builder/home;
+      ls -al /root;
+      cat /builder/home/.docker/config.json;
+      whereis docker-credential-gcr;
 
   volumes:
   - name: empty-dir
